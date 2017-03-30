@@ -5,6 +5,8 @@
 #include <QtGui>
 #include <QLabel>
 
+#include <markwidget.h>
+
 #include <list>
 
 namespace Ui {
@@ -19,8 +21,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void mousePressEvent(QMouseEvent* event);
-
 protected:
     void paintEvent(QPaintEvent* e);
 
@@ -31,6 +31,7 @@ private:
     QLabel* label;
     QPixmap *myPix;
     QPicture* picture;
+    MarkWidget* markWidget;
 
     std::list<QPoint> points;
 };
