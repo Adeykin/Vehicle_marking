@@ -8,7 +8,6 @@
 
 MarkWidget::MarkWidget(QWidget *parent) : QWidget(parent)
 {
-    //resize(500,500);
 }
 
 void MarkWidget::setImage(QImage *image)
@@ -53,10 +52,6 @@ void MarkWidget::mouseMoveEvent(QMouseEvent *event)
 
 void MarkWidget::paintEvent(QPaintEvent *e)
 {
-    qDebug() << "painting MarkWidget";
-
-    //QImage image("/home/adeykin/projects/parking/115000004/901000011/20170327_121030.jpg");
-
     if(image)
     {
         //Draw image

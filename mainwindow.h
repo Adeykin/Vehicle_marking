@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QtGui>
 #include <QLabel>
+#include <QVector>
+#include <QPoint>
 
 #include <markwidget.h>
 
@@ -13,6 +15,16 @@ namespace Ui {
 class MainWindow;
 }
 
+struct MarkedImage
+{
+    QString name;
+    QVector<QVector<QPoint>> poligons;
+    QImage* image = nullptr;
+
+    ~MarkedImage()
+    { delete image; }
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -20,6 +32,12 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+public slots:
+    void open();
+    void save();
+    void prevImage();
+    void nextImage();
 
 protected:
     void paintEvent(QPaintEvent* e);
@@ -33,7 +51,10 @@ private:
     QPicture* picture;
     MarkWidget* markWidget;
 
-    std::list<QPoint> points;
+    QVector<MarkedImage> images;
+    int currentImage = 0;
+
+    void updateImage();
 };
 
 #endif // MAINWINDOW_H
