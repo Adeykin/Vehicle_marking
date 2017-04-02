@@ -3,6 +3,9 @@
 #include <QDebug>
 #include <QtGui>
 
+#include <helpers.h>
+#include <algorithm>
+
 MarkWidget::MarkWidget(QWidget *parent) : QWidget(parent)
 {
     //resize(500,500);
@@ -30,6 +33,16 @@ void MarkWidget::mousePressEvent(QMouseEvent *event)
     if(event->button() == Qt::RightButton)
     {
         qDebug() << "remove detection";
+        poligons.erase(std::remove_if(poligons.begin(), poligons.end(),
+            [event](const QVector<QPoint>& pol)
+            {
+                bool check = isInsidePoligon(pol, event->pos());
+                qDebug() << "Check if need to remove " << check;
+                return check;
+            }
+        ),
+        poligons.end());
+
     }
     update();
 }

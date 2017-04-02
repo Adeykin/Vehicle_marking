@@ -15,9 +15,11 @@ CONFIG  += c++11
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    markwidget.cpp
+    markwidget.cpp \
+    helpers.cpp
 
 HEADERS  += mainwindow.h \
-    markwidget.h
+    markwidget.h \
+    helpers.h
 
 FORMS    += mainwindow.ui
