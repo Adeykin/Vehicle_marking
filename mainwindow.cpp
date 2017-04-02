@@ -84,12 +84,51 @@ void MainWindow::save()
 
 void MainWindow::prevImage()
 {
-    qDebug() << "prev Image";
+    qDebug() << "prev Image" << currentImage-1;
+
+    if(currentImage<=0)
+        return;
+
+    //Loading markers
+    images[currentImage].poligons = markWidget->getPoligons();
+    markWidget->erasePoligons();
+
+    delete images[currentImage].image;
+    images[currentImage].image = nullptr;
+    currentImage--;
+    images[currentImage].image = new QImage(images[currentImage].name);
+
+    markWidget->setImage(images[currentImage].image);
+    markWidget->setPoligons( images[currentImage].poligons );
+
+    markWidget->update();
 }
 
 void MainWindow::nextImage()
 {
+    qDebug() << "next Image" << currentImage+1;
 
+    if(currentImage>=images.size()-1)
+        return;
+
+    //Loading markers
+    images[currentImage].poligons = markWidget->getPoligons();
+    markWidget->erasePoligons();
+
+    delete images[currentImage].image;
+    images[currentImage].image = nullptr;
+    currentImage++;
+    images[currentImage].image = new QImage(images[currentImage].name);
+
+    markWidget->setImage(images[currentImage].image);
+
+    //Set markers
+    if(images[currentImage].poligons.size() == 0)
+        markWidget->setPoligons( images[currentImage-1].poligons );
+    else
+        markWidget->setPoligons( images[currentImage].poligons );
+
+    markWidget->update();
 }
 
 void MainWindow::paintEvent(QPaintEvent *e)
@@ -100,9 +139,6 @@ void MainWindow::updateImage()
 {
     MarkedImage& markedImage = images[currentImage];
     markedImage.image = new QImage(markedImage.name);
-
-    qDebug() << "Image was loaded: " << markedImage.image->size();
-    qDebug() << markedImage.name;
 
     markWidget->setImage(markedImage.image);
     markWidget->update();

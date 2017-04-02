@@ -13,6 +13,10 @@ public:
 
     void setImage(QImage* image);
 
+    QVector<QVector<QPoint>> getPoligons();
+    void setPoligons(QVector<QVector<QPoint>>);
+    void erasePoligons();
+
     void mousePressEvent(QMouseEvent* event);
     void mouseMoveEvent(QMouseEvent* event);
 
@@ -21,7 +25,7 @@ protected:
 private:
     QImage* image = NULL;
     QVector<QPoint> points;
-    QVector<QVector<QPoint> > poligons;
+    QVector<QVector<QPoint>> poligons;
 signals:
 
 public slots:

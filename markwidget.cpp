@@ -16,6 +16,21 @@ void MarkWidget::setImage(QImage *image)
     resize(image->size());
 }
 
+QVector<QVector<QPoint> > MarkWidget::getPoligons()
+{
+    return poligons;
+}
+
+void MarkWidget::setPoligons(QVector<QVector<QPoint> > newPoligons)
+{
+    poligons = newPoligons;
+}
+
+void MarkWidget::erasePoligons()
+{
+    poligons.clear();
+}
+
 void MarkWidget::mousePressEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton)
