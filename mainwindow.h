@@ -17,7 +17,8 @@ class MainWindow;
 
 struct MarkedImage
 {
-    QString name;
+    QString fullPath;
+    QString fileName;
     QVector<QVector<QPoint>> poligons;
     QImage* image = nullptr;
 
@@ -50,6 +51,8 @@ private:
     QPixmap *myPix;
     QPicture* picture;
     MarkWidget* markWidget;
+
+    QFile file;
 
     QVector<MarkedImage> images;
     int currentImage = 0;

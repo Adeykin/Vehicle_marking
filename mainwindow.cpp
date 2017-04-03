@@ -52,8 +52,9 @@ void MainWindow::open()
         tr("Open images list"));
     qDebug() << "Opening file: " << fileName;
 
-    QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    //QFile file(fileName);
+    file.setFileName(fileName);
+    if (!file.open(QIODevice::ReadWrite | QIODevice::Text))
         return;
 
     QFileInfo fileInfo(file);
@@ -64,12 +65,12 @@ void MainWindow::open()
     while (!file.atEnd()) {
         QString line = file.readLine();
         QString imageName = line;
-        //imageName[imageName.size()-1] = '\0';
         imageName = imageName.left(imageName.size()-1);
         //qDebug() << "Reading line: " << line;
         QString fullImageName = path + QDir::separator() + imageName;
         MarkedImage markedImage;
-        markedImage.name = fullImageName;
+        markedImage.fullPath = fullImageName;
+        markedImage.fileName = imageName;
         images.push_back(markedImage);
     }
     qDebug() << images.size() << " images was loaded";
@@ -79,7 +80,20 @@ void MainWindow::open()
 
 void MainWindow::save()
 {
-
+    file.resize(0);
+    QTextStream out(&file);
+    for(auto it = images.begin(); it != images.end(); it++)
+    {
+        out << it->fileName;
+        for(auto poligonIt = it->poligons.begin(); poligonIt != it->poligons.end(); poligonIt++)
+        {
+            out << ' ' << (*poligonIt)[0].x()
+                 << ' ' << (*poligonIt)[1].x()
+                 << ' ' << (*poligonIt)[2].x()
+                 << ' ' << (*poligonIt)[3].x();
+        }
+        out << '\n';
+    }
 }
 
 void MainWindow::prevImage()
@@ -96,7 +110,7 @@ void MainWindow::prevImage()
     delete images[currentImage].image;
     images[currentImage].image = nullptr;
     currentImage--;
-    images[currentImage].image = new QImage(images[currentImage].name);
+    images[currentImage].image = new QImage(images[currentImage].fullPath);
 
     markWidget->setImage(images[currentImage].image);
     markWidget->setPoligons( images[currentImage].poligons );
@@ -118,7 +132,7 @@ void MainWindow::nextImage()
     delete images[currentImage].image;
     images[currentImage].image = nullptr;
     currentImage++;
-    images[currentImage].image = new QImage(images[currentImage].name);
+    images[currentImage].image = new QImage(images[currentImage].fullPath);
 
     markWidget->setImage(images[currentImage].image);
 
@@ -138,7 +152,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
 void MainWindow::updateImage()
 {
     MarkedImage& markedImage = images[currentImage];
-    markedImage.image = new QImage(markedImage.name);
+    markedImage.image = new QImage(markedImage.fullPath);
 
     markWidget->setImage(markedImage.image);
     markWidget->update();
