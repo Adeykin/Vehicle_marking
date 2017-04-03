@@ -22,9 +22,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setCentralWidget(area);
 
-    //markWidget->setImage(&image);
-
-    //QObject::connect(ui->menuFile, SIGNAL(triggered()),this, SLOT(openFileList()));
     QMenu* menu = ui->menuBar->addMenu("File");
     QAction* actOpen = new QAction("Open", this);
     QAction* actSave = new QAction("Save", this);
@@ -131,12 +128,10 @@ void MainWindow::prevImage()
     images[currentImage].poligons = markWidget->getPoligons();
     markWidget->erasePoligons();
 
-    delete images[currentImage].image;
-    images[currentImage].image = nullptr;
     currentImage--;
-    images[currentImage].image = new QImage(images[currentImage].fullPath);
+    image.load(images[currentImage].fullPath);
 
-    markWidget->setImage(images[currentImage].image);
+    markWidget->setImage(&image);
     markWidget->setPoligons( images[currentImage].poligons );
 
     status->setText(QString::number(currentImage+1) + "/" + QString::number(images.size()));
@@ -154,12 +149,10 @@ void MainWindow::nextImage()
     images[currentImage].poligons = markWidget->getPoligons();
     markWidget->erasePoligons();
 
-    delete images[currentImage].image;
-    images[currentImage].image = nullptr;
     currentImage++;
-    images[currentImage].image = new QImage(images[currentImage].fullPath);
+    image.load(images[currentImage].fullPath);
 
-    markWidget->setImage(images[currentImage].image);
+    markWidget->setImage(&image);
 
     //Set markers
     if(images[currentImage].poligons.size() == 0)
@@ -171,16 +164,12 @@ void MainWindow::nextImage()
     markWidget->update();
 }
 
-void MainWindow::paintEvent(QPaintEvent *e)
-{
-}
-
 void MainWindow::updateImage()
 {
     MarkedImage& markedImage = images[currentImage];
-    markedImage.image = new QImage(markedImage.fullPath);
+    image.load(markedImage.fullPath);
 
-    markWidget->setImage(markedImage.image);
+    markWidget->setImage(&image);
     markWidget->erasePoligons();
     markWidget->setPoligons(markedImage.poligons);
     status->setText(QString::number(currentImage+1) + "/" + QString::number(images.size()));

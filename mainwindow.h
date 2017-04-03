@@ -20,10 +20,6 @@ struct MarkedImage
     QString fullPath;
     QString fileName;
     QVector<QVector<QPoint>> poligons;
-    QImage* image = nullptr;
-
-    ~MarkedImage()
-    { delete image; }
 };
 
 class MainWindow : public QMainWindow
@@ -39,9 +35,6 @@ public slots:
     void save();
     void prevImage();
     void nextImage();
-
-protected:
-    void paintEvent(QPaintEvent* e);
 
 private:
     Ui::MainWindow *ui;
