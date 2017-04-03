@@ -39,6 +39,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->mainToolBar->addAction(actNext);
     connect(actPrev, SIGNAL(triggered(bool)), this, SLOT(prevImage()));
     connect(actNext, SIGNAL(triggered(bool)), this, SLOT(nextImage()));
+
+    status = new QLabel();
+    ui->mainToolBar->addWidget(status);
 }
 
 MainWindow::~MainWindow()
@@ -136,6 +139,7 @@ void MainWindow::prevImage()
     markWidget->setImage(images[currentImage].image);
     markWidget->setPoligons( images[currentImage].poligons );
 
+    status->setText(QString::number(currentImage+1) + "/" + QString::number(images.size()));
     markWidget->update();
 }
 
@@ -163,6 +167,7 @@ void MainWindow::nextImage()
     else
         markWidget->setPoligons( images[currentImage].poligons );
 
+    status->setText(QString::number(currentImage+1) + "/" + QString::number(images.size()));
     markWidget->update();
 }
 
@@ -178,5 +183,6 @@ void MainWindow::updateImage()
     markWidget->setImage(markedImage.image);
     markWidget->erasePoligons();
     markWidget->setPoligons(markedImage.poligons);
+    status->setText(QString::number(currentImage+1) + "/" + QString::number(images.size()));
     markWidget->update();
 }

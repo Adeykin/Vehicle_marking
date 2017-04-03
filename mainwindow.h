@@ -51,6 +51,7 @@ private:
     QPixmap *myPix;
     QPicture* picture;
     MarkWidget* markWidget;
+    QLabel* status;
 
     QFile file;
 
