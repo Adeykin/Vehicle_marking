@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <string>
+#include <assert.h>
 
 #include <QLabel>
 #include <QScrollArea>
@@ -11,7 +12,6 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
-    //image("/home/adeykin/projects/parking/115000004/901000011/20170327_121030.jpg")
 {
     ui->setupUi(this);
 
@@ -64,13 +64,33 @@ void MainWindow::open()
 
     while (!file.atEnd()) {
         QString line = file.readLine();
-        QString imageName = line;
-        imageName = imageName.left(imageName.size()-1);
-        //qDebug() << "Reading line: " << line;
+
+        //parse line
+        QStringList stringList = line.split(' ');
+        assert(stringList.size() > 0);
+        assert( (stringList.size()-1)%8 == 0 );
+        int poligonsNum = (stringList.size()-1)/8;
+        QStringListIterator it(stringList);
+        it.next();
+
+        QString imageName = stringList.at(0);
+        imageName = imageName.simplified();
         QString fullImageName = path + QDir::separator() + imageName;
         MarkedImage markedImage;
         markedImage.fullPath = fullImageName;
         markedImage.fileName = imageName;
+        for(int i = 0; i < poligonsNum; i++)
+        {
+            QVector<QPoint> poligon(4);
+            for(int j = 0; j < 4; j++)
+            {
+                int x = it.next().toInt();
+                int y = it.next().toInt();
+                poligon[j] = QPoint( x, y);
+            }
+            markedImage.poligons.push_back(poligon);
+            //qDebug() << "Load: " << poligon;
+        }
         images.push_back(markedImage);
     }
     qDebug() << images.size() << " images was loaded";
@@ -80,6 +100,7 @@ void MainWindow::open()
 
 void MainWindow::save()
 {
+    images[currentImage].poligons = markWidget->getPoligons();
     file.resize(0);
     QTextStream out(&file);
     for(auto it = images.begin(); it != images.end(); it++)
@@ -87,10 +108,10 @@ void MainWindow::save()
         out << it->fileName;
         for(auto poligonIt = it->poligons.begin(); poligonIt != it->poligons.end(); poligonIt++)
         {
-            out << ' ' << (*poligonIt)[0].x()
-                 << ' ' << (*poligonIt)[1].x()
-                 << ' ' << (*poligonIt)[2].x()
-                 << ' ' << (*poligonIt)[3].x();
+            out << ' ' << (*poligonIt)[0].x() << ' ' << (*poligonIt)[0].y()
+                 << ' ' << (*poligonIt)[1].x() << ' ' << (*poligonIt)[1].y()
+                 << ' ' << (*poligonIt)[2].x() << ' ' << (*poligonIt)[2].y()
+                 << ' ' << (*poligonIt)[3].x() << ' ' << (*poligonIt)[3].y();
         }
         out << '\n';
     }
@@ -155,5 +176,7 @@ void MainWindow::updateImage()
     markedImage.image = new QImage(markedImage.fullPath);
 
     markWidget->setImage(markedImage.image);
+    markWidget->erasePoligons();
+    markWidget->setPoligons(markedImage.poligons);
     markWidget->update();
 }
