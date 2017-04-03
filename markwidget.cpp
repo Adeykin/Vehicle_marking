@@ -8,6 +8,7 @@
 
 MarkWidget::MarkWidget(QWidget *parent) : QWidget(parent)
 {
+    setMouseTracking(true);
 }
 
 void MarkWidget::setImage(QImage *image)
@@ -36,6 +37,7 @@ void MarkWidget::mousePressEvent(QMouseEvent *event)
     if(event->button() == Qt::LeftButton)
     {
         qDebug() << "add point " << event->pos().x() << ' ' << event->pos().y();
+        movePoint = event->pos();
         points.push_back( event->pos() );
         if(points.size() == 4)
         {
@@ -63,6 +65,12 @@ void MarkWidget::mousePressEvent(QMouseEvent *event)
 
 void MarkWidget::mouseMoveEvent(QMouseEvent *event)
 {
+    //qDebug() << "move " << event->pos();
+    if(points.size() != 0 )
+    {
+        movePoint = event->pos();
+        update();
+    }
 }
 
 void MarkWidget::paintEvent(QPaintEvent *e)
@@ -82,8 +90,14 @@ void MarkWidget::paintEvent(QPaintEvent *e)
         }
 
         //Draw current poligin
-        p.setPen(QPen(Qt::green, 3, Qt::SolidLine, Qt::RoundCap));
-        p.drawPolyline(points);
+        if(points.size() > 0)
+        {
+            p.setPen(QPen(Qt::green, 3, Qt::SolidLine, Qt::RoundCap));
+            p.drawPolyline(points);
+            p.drawLine(points.back(), movePoint);
+
+            qDebug() << "from " << points.back() << " to " << movePoint;
+        }
     }
 }
 

@@ -24,6 +24,7 @@ protected:
     void paintEvent(QPaintEvent* e);
 private:
     QImage* image = NULL;
+    QPoint movePoint;
     QVector<QPoint> points;
     QVector<QVector<QPoint>> poligons;
 signals:
